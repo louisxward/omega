@@ -11,8 +11,9 @@ import org.hibernate.envers.Audited;
 @Audited
 @Getter
 @Setter
-public class UserAuth extends BaseEntity {
+public class UserCredential extends BaseEntity {
     @OneToOne
     private User user;
-    private String password;
+    private String passwordHash;
+    private String salt;
 }
