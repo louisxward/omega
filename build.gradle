@@ -27,6 +27,11 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-jwt'
     implementation 'io.quarkus:quarkus-undertow'
 
+	compileOnly 'org.projectlombok:lombok:1.18.34'
+	annotationProcessor 'org.projectlombok:lombok:1.18.34'
+	testCompileOnly 'org.projectlombok:lombok:1.18.34'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 }
