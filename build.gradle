@@ -23,9 +23,12 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-validator'
 
     implementation 'io.quarkus:quarkus-jdbc-postgresql'
+
+    // Not sure
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-smallrye-jwt'
     implementation 'io.quarkus:quarkus-undertow'
+    implementation("io.quarkus:quarkus-scheduler")
 
 	compileOnly 'org.projectlombok:lombok:1.18.34'
 	annotationProcessor 'org.projectlombok:lombok:1.18.34'
