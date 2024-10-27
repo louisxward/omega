@@ -5,19 +5,21 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import org.hibernate.envers.Audited;
+import lombok.Getter;
+import lombok.Setter;
 
 
 @MappedSuperclass
-@Audited
+@Getter
+@Setter
 public abstract class BaseEntity extends PanacheEntity {
 
     @ManyToOne
-    public User modifiedBy;
+    private User modifiedBy;
 
     @PrePersist
     @PreUpdate
-    public void onPersistOrUpdate() {
+    private void onPersistOrUpdate() {
         // TODO: Set this.modifiedBy to the current user
     }
 }
