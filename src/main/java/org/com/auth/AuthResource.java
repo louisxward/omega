@@ -7,6 +7,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.com.entity.User;
+import org.com.entity.UserAuth;
 
 import java.util.Set;
 
@@ -16,12 +17,13 @@ public class AuthResource {
     @POST
     @Path("/token")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response generateToken(User credentials) {
-        if (verifyCredentials(credentials.getUsername(), credentials.getPassword())) {
+    public Response generateToken(AuthRequest authRequest) {
+        if (verifyCredentials(authRequest.username(), authRequest.password())) {
             String token =
-                    Jwt.issuer("https://example.com/issuer")
-                            .upn(credentials.getUsername())
-                            .groups(Set.of("user"))
+                    Jwt.issuer("CHANGE_MEEEEEEEEEEEEEEE")
+                            .upn(authRequest.username())
+                            // ToDo - Set Group
+                            .groups(Set.of("standard", "admin"))
                             .sign();
             return Response.ok().entity(token).build();
         } else {
@@ -33,6 +35,9 @@ public class AuthResource {
         // TODO: Implement your actual authentication logic here
         // This is a placeholder, you should hash and compare passwords securely
         User user = User.find("username", username).firstResult();
-        return user != null && user.getPassword().equals(password);
+        if (null == user) return false;
+        // ToDo - Not sure on this
+        UserAuth userAuth = UserAuth.find("user", user).firstResult();
+        return null != userAuth && userAuth.getPassword().equals(password);
     }
 }

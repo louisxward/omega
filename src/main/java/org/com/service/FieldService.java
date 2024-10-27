@@ -41,8 +41,8 @@ public class FieldService {
 
     @Transactional
     private void processUpdateRequest(FieldUpdateRequest request) {
-        Long id = request.getId(); // Assuming getId() method in FieldUpdateRequest
-        Field field = request.getField(); // Assuming getfield() method in FieldUpdateRequest
+        Long id = request.id(); // Assuming getId() method in FieldUpdateRequest
+        Field field = request.field(); // Assuming getfield() method in FieldUpdateRequest
 
         if (!id.equals(field.id)) {
             // Handle ID mismatch (e.g., log an error)
