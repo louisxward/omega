@@ -1,4 +1,4 @@
-package org.cangular;
+package org.com;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

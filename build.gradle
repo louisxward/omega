@@ -24,7 +24,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
 }
 
-group 'org.cangular'
+group 'org.com'
 version '0.0.1'
 
 java {
