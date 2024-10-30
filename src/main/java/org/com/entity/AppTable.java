@@ -13,8 +13,8 @@ import java.util.List;
 @Audited
 @Getter
 @Setter
-public class Table extends BaseEntity {
+public class AppTable extends BaseEntity {
     private String name;
     @OneToMany
-    private List<Field> fields;
+    private List<AppField> fields;
 }

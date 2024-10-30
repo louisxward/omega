@@ -11,9 +11,8 @@ import org.hibernate.envers.Audited;
 @Audited
 @Getter
 @Setter
-public class Field extends BaseEntity {
+public class AppField extends BaseEntity {
     private String valueString;
-    private Boolean valueBoolean;
     @ManyToOne
-    private Table table;
+    private AppTable table;
 }

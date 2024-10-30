@@ -6,7 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
-import org.com.entity.Field;
+import org.com.entity.AppField;
 import org.com.model.FieldUpdateRequest;
 import org.com.repository.FieldRepository;
 
@@ -22,7 +22,7 @@ public class FieldService {
     FieldRepository repository;
 
     @Transactional
-    public Field createField(Field field) {
+    public AppField createField(AppField field) {
         repository.persist(field);
         return field;
     }
@@ -40,10 +40,9 @@ public class FieldService {
     }
 
     @Transactional
-    private void processUpdateRequest(FieldUpdateRequest request) {
+    public void processUpdateRequest(FieldUpdateRequest request) {
         Long id = request.id(); // Assuming getId() method in FieldUpdateRequest
-        Field field = request.field(); // Assuming getfield() method in FieldUpdateRequest
-
+        AppField field = request.field(); // Assuming getfield() method in FieldUpdateRequest
         if (!id.equals(field.id)) {
             // Handle ID mismatch (e.g., log an error)
             return;

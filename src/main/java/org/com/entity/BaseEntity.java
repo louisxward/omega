@@ -1,8 +1,8 @@
 package org.com.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 public abstract class BaseEntity extends PanacheEntity {
 
-    @ManyToOne
+    @OneToOne
     private User modifiedBy;
 
     @PrePersist
