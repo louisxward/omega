@@ -17,10 +17,10 @@ import java.util.Set;
 
 @Path("/auth")
 public class AuthResource {
-
+    
     private static final String ISSUER = "the_omega-application-3million"; // Store this securely!
     private static final String PEPPER = "my_secret_pepper"; // Store this securely!
-
+    
     @POST
     @Path("/token")
     @Produces(MediaType.APPLICATION_JSON)
@@ -34,18 +34,18 @@ public class AuthResource {
                 String saltedPassword = credential.getSalt() + password + PEPPER;
                 if (BcryptUtil.matches(saltedPassword, credential.getPasswordHash())) {
                     String token =
-                            Jwt.issuer(ISSUER)
-                                    .upn(username)
-                                    // ToDo - set roles from db
-                                    .groups(Set.of("standard", "admin"))
-                                    .sign();
+                        Jwt.issuer(ISSUER)
+                            .upn(username)
+                            // ToDo - set roles from db
+                            .groups(Set.of("standard", "admin"))
+                            .sign();
                     return Response.ok().entity(token).build();
                 }
             }
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-
+    
     @POST
     @Path("/register")
     @Transactional
@@ -57,7 +57,6 @@ public class AuthResource {
         byte[] saltBytes = new byte[16];
         random.nextBytes(saltBytes);
         String salt = Base64.getEncoder().encodeToString(saltBytes);
-        // Hash the password with salt and pepper
         String saltedPassword = salt + authRequest.password() + PEPPER;
         String passwordHash = BcryptUtil.bcryptHash(saltedPassword);
         UserCredential credential = new UserCredential();
