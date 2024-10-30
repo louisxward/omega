@@ -65,6 +65,6 @@ public class AuthResource {
         credential.setPasswordHash(passwordHash);
         credential.setSalt(salt);
         credential.persist();
-        return Response.status(201).build();
+        return Response.status(Response.Status.CREATED).build();
     }
 }
