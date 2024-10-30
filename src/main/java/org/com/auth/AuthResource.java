@@ -19,7 +19,7 @@ import java.util.Set;
 public class AuthResource {
 
     private static final String ISSUER = "the_omega-application-3million"; // Store this securely!
-    private static final String PEPPER = "your_secret_pepper"; // Store this securely!
+    private static final String PEPPER = "my_secret_pepper"; // Store this securely!
 
     @POST
     @Path("/token")

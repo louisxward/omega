@@ -15,6 +15,6 @@ import java.util.List;
 @Setter
 public class AppTable extends BaseEntity {
     private String name;
-    @OneToMany
+    @OneToMany(mappedBy = "table")
     private List<AppField> fields;
 }
