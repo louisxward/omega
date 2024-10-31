@@ -1,24 +1,34 @@
 package org.com.service;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.RequestScoped;
 import org.com.entity.Post;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequestScoped
-public class PostService extends PanacheEntity {
+public class PostService {
     
-    @RestClient
-    PostExternalService postExternalService;
-    
-    public List<Post> getAll() {
-        return postExternalService.getAll();
+    public long count() {
+        return Post.count();
     }
     
-    public void consumePosts() {
+    public Optional<Post> get(Long id) {
+        return Post.findByIdOptional(id);
+    }
     
+    public List<Post> getByUserId(Long id) {
+        return Post.list("userId", id);
+    }
+    
+    public List<Post> getAll(Long id, Long userId, String title) {
+        return Post.listAll();
+    }
+    
+    public List<Post> getSearch(Long id, Long userId, String title) {
+        return Post.list("id = :id or userId = :userId or title = :title",
+            Parameters.with("id", id).and("userId", userId).and("title", title));
     }
     
 }
