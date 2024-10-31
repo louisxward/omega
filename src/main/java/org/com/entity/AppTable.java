@@ -8,7 +8,6 @@ import org.hibernate.envers.Audited;
 
 import java.util.List;
 
-
 @Entity
 @Audited
 @Getter

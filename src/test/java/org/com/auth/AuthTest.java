@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 
-public class AuthTest {
+class AuthTest {
     
     @Test
-    public void testInvalidCredentials() {
+    void testInvalidCredentials() {
         given()
             .contentType(ContentType.JSON)
             .body("{\"username\": \"liljohn\", \"password\": \"maryjane\"}")
@@ -20,7 +20,7 @@ public class AuthTest {
     }
     
     @Test
-    public void testRegister() {
+    void testRegister() {
         given()
             .contentType(ContentType.JSON)
             .body("{\"username\": \"liljohn\", \"password\": \"maryjane\"}")
