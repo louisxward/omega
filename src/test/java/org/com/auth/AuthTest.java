@@ -41,5 +41,6 @@ public class AuthTest {
             .statusCode(Response.Status.OK.getStatusCode());
         System.out.println(User.count());
         System.out.println("test");
+        // Uses new db for the test. Need to set the junit to use dev db
     }
 }
