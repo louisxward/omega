@@ -18,7 +18,7 @@ import java.util.Set;
 @Path("/auth")
 public class AuthResource {
     
-    private static final String ISSUER = "the_omega-application-3million"; // Store this securely!
+    private static final String ISSUER = "https://example.com/issuer"; // Store this securely!
     private static final String PEPPER = "my_secret_pepper"; // Store this securely!
     
     @POST

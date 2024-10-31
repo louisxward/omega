@@ -4,7 +4,7 @@
     <option name="bindingSuggestionsEnabled" value="false" />
     <option name="fileExclusions">
       <list>
-        <option value="DIRECTORY:." />
+        <option value="DIRECTORY:src" />
       </list>
     </option>
   </component>
