@@ -8,15 +8,13 @@ import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @MappedSuperclass
 @Getter
 @Setter
 public abstract class BaseEntity extends PanacheEntity {
-
     @OneToOne
     private User modifiedBy;
-
+    
     @PrePersist
     @PreUpdate
     private void onPersistOrUpdate() {
