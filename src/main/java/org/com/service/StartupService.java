@@ -3,25 +3,30 @@ package org.com.service;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.com.client.PostExternalClient;
 import org.com.entity.Post;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
-public class StartUpService {
+public class StartupService {
     
+    @Inject
+    Logger logger;
     @RestClient
-    PostExternalService postExternalService;
+    PostExternalClient postExternalClient;
     
     @Transactional
     public void importPosts() {
-        System.out.println("StartUpService - import posts from external api");
-        Post.persist(this.postExternalService.getAll());
+        logger.info("StartupService - importPosts");
+        Post.persist(this.postExternalClient.getAll());
     }
     
     public void onStart(@Observes StartupEvent ev) {
-        System.out.println("StartUpService - App Started - start");
+        logger.info("StartupService - onStart - start");
         this.importPosts();
-        System.out.println("StartUpService - App Started - end");
+        logger.info("StartupService - onStart - end");
     }
 }

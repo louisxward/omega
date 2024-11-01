@@ -1,4 +1,4 @@
-package org.com.service;
+package org.com.client;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -10,8 +10,8 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import java.util.List;
 
 @Path("/posts")
-@RegisterRestClient(baseUri = "https://jsonplaceholder.typicode.com")//configKey = "post-api"
-public interface PostExternalService {
+@RegisterRestClient(baseUri = "https://jsonplaceholder.typicode.com")
+public interface PostExternalClient {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     List<Post> getAll();

@@ -1,7 +1,6 @@
 package org.com.model;
 
+import org.com.entity.FieldEntity;
 
-import org.com.entity.AppField;
-
-public record FieldUpdateRequest(Long id, AppField field) {
+public record FieldUpdateRequest(Long id, FieldEntity field) {
 }

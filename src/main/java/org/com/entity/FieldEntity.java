@@ -11,9 +11,9 @@ import org.hibernate.envers.Audited;
 @Audited
 @Getter
 @Setter
-public class AppField extends BaseEntity {
+public class FieldEntity extends BaseEntity {
     private String valueString;
     @ManyToOne
     @JoinColumn(name = "table_id")
-    private AppTable table;
+    private TableEntity table;
 }

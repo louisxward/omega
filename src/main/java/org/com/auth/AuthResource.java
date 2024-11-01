@@ -57,8 +57,8 @@ public class AuthResource {
         byte[] saltBytes = new byte[16];
         random.nextBytes(saltBytes);
         String salt = Base64.getEncoder().encodeToString(saltBytes);
-        String saltedPassword = salt + authRequest.password() + PEPPER;
-        String passwordHash = BcryptUtil.bcryptHash(saltedPassword);
+        String seasonedPassword = salt + authRequest.password() + PEPPER;
+        String passwordHash = BcryptUtil.bcryptHash(seasonedPassword);
         UserCredential credential = new UserCredential();
         credential.setUser(user);
         credential.setPasswordHash(passwordHash);
