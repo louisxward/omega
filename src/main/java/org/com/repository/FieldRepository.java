@@ -5,5 +5,4 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.com.entity.FieldEntity;
 
 @ApplicationScoped
-public class FieldRepository implements PanacheRepository<FieldEntity> {
-}
+public class FieldRepository implements PanacheRepository<FieldEntity> {}

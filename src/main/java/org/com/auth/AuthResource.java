@@ -10,6 +10,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.com.entity.User;
 import org.com.entity.UserCredential;
+import org.com.model.AuthRequest;
 
 import java.security.SecureRandom;
 import java.util.Base64;
