@@ -5,15 +5,11 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import lombok.Getter;
-import lombok.Setter;
 
 @MappedSuperclass
-@Getter
-@Setter
 public abstract class BaseEntity extends PanacheEntity {
     @OneToOne
-    private User modifiedBy;
+    public User modifiedBy;
     
     @PrePersist
     @PreUpdate

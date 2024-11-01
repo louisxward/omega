@@ -24,7 +24,7 @@ public class StartupService {
         Post.persist(this.postExternalClient.getAll());
     }
     
-    public void onStart(@Observes StartupEvent ev) {
+    public void onStart(@Observes StartupEvent event) {
         logger.info("StartupService - onStart - start");
         this.importPosts();
         logger.info("StartupService - onStart - end");

@@ -14,6 +14,7 @@ import org.com.model.AuthRequest;
 
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.Set;
 
 @Path("/auth")
@@ -26,18 +27,17 @@ public class AuthResource {
     @Path("/token")
     @Produces(MediaType.APPLICATION_JSON)
     public Response generateToken(AuthRequest authRequest) {
-        String username = authRequest.username();
-        String password = authRequest.password();
-        User user = User.find("username", username).firstResult();
-        if (user != null) {
-            UserCredential credential = UserCredential.find("user", user).firstResult();
-            if (credential != null) {
-                String saltedPassword = credential.getSalt() + password + PEPPER;
-                if (BcryptUtil.matches(saltedPassword, credential.getPasswordHash())) {
-                    String token =
+        var username = authRequest.username();
+        var password = authRequest.password();
+        Optional<User> user = User.find("username", username).firstResultOptional();
+        if (user.isPresent()) {
+            Optional<UserCredential> credential = UserCredential.find("user", user.get()).firstResultOptional();
+            if (credential.isPresent()) {
+                var saltedPassword = credential.get().salt + password + PEPPER;
+                if (BcryptUtil.matches(saltedPassword, credential.get().passwordHash)) {
+                    var token =
                         Jwt.issuer(ISSUER)
                             .upn(username)
-                            // ToDo - set roles from db
                             .groups(Set.of("standard", "admin"))
                             .sign();
                     return Response.ok().entity(token).build();
@@ -51,19 +51,19 @@ public class AuthResource {
     @Path("/register")
     @Transactional
     public Response register(AuthRequest authRequest) {
-        User user = new User();
-        user.setUsername(authRequest.username());
+        var user = new User();
+        user.username = authRequest.username();
         user.persist();
-        SecureRandom random = new SecureRandom();
-        byte[] saltBytes = new byte[16];
+        var random = new SecureRandom();
+        var saltBytes = new byte[16];
         random.nextBytes(saltBytes);
-        String salt = Base64.getEncoder().encodeToString(saltBytes);
-        String seasonedPassword = salt + authRequest.password() + PEPPER;
-        String passwordHash = BcryptUtil.bcryptHash(seasonedPassword);
-        UserCredential credential = new UserCredential();
-        credential.setUser(user);
-        credential.setPasswordHash(passwordHash);
-        credential.setSalt(salt);
+        var salt = Base64.getEncoder().encodeToString(saltBytes);
+        var seasonedPassword = salt + authRequest.password() + PEPPER;
+        var passwordHash = BcryptUtil.bcryptHash(seasonedPassword);
+        var credential = new UserCredential();
+        credential.user = user;
+        credential.passwordHash = passwordHash;
+        credential.salt = salt;
         credential.persist();
         return Response.status(Response.Status.CREATED).build();
     }
