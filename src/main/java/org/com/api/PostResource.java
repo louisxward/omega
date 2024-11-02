@@ -1,5 +1,6 @@
 package org.com.api;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -10,6 +11,7 @@ import org.com.entity.Post;
 
 @Path("/posts")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed({"standard"})
 public class PostResource {
     
     @GET

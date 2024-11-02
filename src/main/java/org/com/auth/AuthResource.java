@@ -3,9 +3,7 @@ package org.com.auth;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.com.entity.User;
@@ -18,14 +16,16 @@ import java.util.Optional;
 import java.util.Set;
 
 @Path("/auth")
+//@PermitAll
+@Consumes(MediaType.APPLICATION_JSON)
 public class AuthResource {
     
     private static final String ISSUER = "https://example.com/issuer"; // Store this securely!
     private static final String PEPPER = "my_secret_pepper"; // Store this securely!
     
-    @POST
-    @Path("/token")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("/login")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response generateToken(AuthRequest authRequest) {
         var username = authRequest.username();
         var password = authRequest.password();
@@ -38,7 +38,7 @@ public class AuthResource {
                     var token =
                         Jwt.issuer(ISSUER)
                             .upn(username)
-                            .groups(Set.of("standard", "admin"))
+                            .groups(Set.of("standard"))
                             .sign();
                     return Response.ok().entity(token).build();
                 }
