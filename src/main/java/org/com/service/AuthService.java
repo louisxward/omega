@@ -45,29 +45,43 @@ public class AuthService {
                 }
             }
         }
+        logger.warn("generateToken - invalid details");
         return Optional.empty();
     }
     
-    @Transactional
     public boolean register(AuthRequest authRequest) {
-        var user = new User();
-        user.username = authRequest.username();
-        user.persist();
-        if (!user.isPersistent()) {
+        User user;
+        try {
+            user = createUser(authRequest.username());
+        } catch (Exception e) {
+            logger.warn(String.format("register - %s", e.getMessage()));
             return false;
         }
+        createCredential(user, authRequest.username());
+        logger.info(String.format("register - user registered '%s'", user.id));
+        return true;
+    }
+    
+    @Transactional
+    private User createUser(String username) {
+        var user = new User();
+        user.username = username;
+        user.persist();
+        return user;
+    }
+    
+    @Transactional
+    private void createCredential(User user, String password) {
         var random = new SecureRandom();
         var saltBytes = new byte[16];
         random.nextBytes(saltBytes);
         var salt = Base64.getEncoder().encodeToString(saltBytes);
-        var seasonedPassword = salt + authRequest.password() + PEPPER;
+        var seasonedPassword = salt + password + PEPPER;
         var passwordHash = BcryptUtil.bcryptHash(seasonedPassword);
         var credential = new UserCredential();
         credential.user = user;
         credential.passwordHash = passwordHash;
         credential.salt = salt;
         credential.persist();
-        return credential.isPersistent();
     }
-    
 }
