@@ -20,13 +20,13 @@ public class StartupService {
     
     @Transactional
     public void importPosts() {
-        logger.info("StartupService - importPosts");
+        logger.info("importPosts");
         Post.persist(this.postExternalClient.getAll());
     }
     
     public void onStart(@Observes StartupEvent event) {
-        logger.info("StartupService - onStart - start");
+        logger.info("onStart - start");
         this.importPosts();
-        logger.info("StartupService - onStart - end");
+        logger.info("onStart - end");
     }
 }
