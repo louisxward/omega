@@ -5,14 +5,13 @@ import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 import org.com.entity.User;
 import org.com.entity.UserCredential;
 import org.com.model.AuthRequest;
-import org.com.model.AuthResponse;
 import org.jboss.logging.Logger;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
@@ -26,54 +25,44 @@ public class AuthService {
     @Inject
     Logger logger;
     
-    public Optional<String> generateToken(AuthRequest authRequest) {
-        logger.info("generateToken");
-        var username = authRequest.username();
-        var password = authRequest.password();
-        Optional<User> optUser = User.find("username", username).firstResultOptional();
+    public Response verifyAndGenerateToken(AuthRequest authRequest) {
+        logger.info("verifyAndGenerateToken");
+        Optional<User> optUser = User.find("username", authRequest.username()).firstResultOptional();
         if (optUser.isPresent()) {
             var user = optUser.get();
-            logger.info(String.format("generateToken - user found '%s'", user.id));
-            Optional<UserCredential> credential = UserCredential.find("user", user).firstResultOptional();
-            if (credential.isPresent()) {
-                var saltedPassword = credential.get().salt + password + PEPPER;
-                if (BcryptUtil.matches(saltedPassword, credential.get().passwordHash)) {
-                    logger.info(String.format("generateToken - user authorised '%s'", user.id));
+            logger.info(String.format("verifyAndGenerateToken - user found '%s'", user.id));
+            Optional<UserCredential> optCredential = UserCredential.find("user", user).firstResultOptional();
+            if (optCredential.isPresent()) {
+                var credential = optCredential.get();
+                var seasonedPassword = credential.salt + authRequest.password() + PEPPER;
+                if (BcryptUtil.matches(seasonedPassword, credential.passwordHash)) {
+                    logger.info(String.format("verifyAndGenerateToken - user authorised '%s'", user.id));
                     var token = Jwt.issuer(ISSUER)
-                        .upn(username)
+                        .upn(authRequest.username())
                         .groups(Set.of("standard"))
                         .sign();
-                    return Optional.of(token);
+                    return Response.ok(token).build();
                 }
             }
         }
-        logger.warn("generateToken - invalid details");
-        return Optional.empty();
+        logger.warn("verifyAndGenerateToken - BAD_REQUEST");
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
     
     @Transactional
-    public AuthResponse register(AuthRequest authRequest) {
-        var username = authRequest.username();
-        var password = authRequest.password();
-        var messages = new ArrayList<String>();
-        if (null == username || null == password) {
-            messages.add("Please enter details");
-            return new AuthResponse(false, messages);
+    public Response validateAndRegister(AuthRequest authRequest) {
+        logger.info("validateAndRegister");
+        if (!verifyUniqueUsername(authRequest.username())) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("{field='register.authRequest.username', message='must be unique'}").build();
         }
-        if (!uniqueUsername(username)) messages.add("Username not unique");
-        if (!validPassword(password)) messages.add("Password not valid");
-        if (!messages.isEmpty()) return new AuthResponse(false, messages);
-        var user = createUser(username);
-        createCredential(user, password);
-        return String.format("User created '%s'", user.id);
+        var user = createUser(authRequest.username());
+        createCredential(user, authRequest.password());
+        logger.info(String.format("validateAndRegister - user created '%s'", user.id));
+        return Response.ok().build();
     }
     
-    private boolean uniqueUsername(String username) {
+    private boolean verifyUniqueUsername(String username) {
         return User.find("username", username).count() == 0;
-    }
-    
-    private boolean validPassword(String password) {
-        return null != password && password.length() > 4;
     }
     
     private User createUser(String username) {
@@ -83,11 +72,15 @@ public class AuthService {
         return user;
     }
     
-    private void createCredential(User user, String password) {
+    private String passSalt() {
         var random = new SecureRandom();
         var saltBytes = new byte[16];
         random.nextBytes(saltBytes);
-        var salt = Base64.getEncoder().encodeToString(saltBytes);
+        return Base64.getEncoder().encodeToString(saltBytes);
+    }
+    
+    private void createCredential(User user, String password) {
+        var salt = passSalt();
         var seasonedPassword = salt + password + PEPPER;
         var passwordHash = BcryptUtil.bcryptHash(seasonedPassword);
         var credential = new UserCredential();
