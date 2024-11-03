@@ -8,9 +8,11 @@ import jakarta.transaction.Transactional;
 import org.com.entity.User;
 import org.com.entity.UserCredential;
 import org.com.model.AuthRequest;
+import org.com.model.AuthResponse;
 import org.jboss.logging.Logger;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
@@ -49,20 +51,31 @@ public class AuthService {
         return Optional.empty();
     }
     
-    public boolean register(AuthRequest authRequest) {
-        User user;
-        try {
-            user = createUser(authRequest.username());
-        } catch (Exception e) {
-            logger.warn(String.format("register - %s", e.getMessage()));
-            return false;
+    @Transactional
+    public AuthResponse register(AuthRequest authRequest) {
+        var username = authRequest.username();
+        var password = authRequest.password();
+        var messages = new ArrayList<String>();
+        if (null == username || null == password) {
+            messages.add("Please enter details");
+            return new AuthResponse(false, messages);
         }
-        createCredential(user, authRequest.username());
-        logger.info(String.format("register - user registered '%s'", user.id));
-        return true;
+        if (!uniqueUsername(username)) messages.add("Username not unique");
+        if (!validPassword(password)) messages.add("Password not valid");
+        if (!messages.isEmpty()) return new AuthResponse(false, messages);
+        var user = createUser(username);
+        createCredential(user, password);
+        return String.format("User created '%s'", user.id);
     }
     
-    @Transactional
+    private boolean uniqueUsername(String username) {
+        return User.find("username", username).count() == 0;
+    }
+    
+    private boolean validPassword(String password) {
+        return null != password && password.length() > 4;
+    }
+    
     private User createUser(String username) {
         var user = new User();
         user.username = username;
@@ -70,7 +83,6 @@ public class AuthService {
         return user;
     }
     
-    @Transactional
     private void createCredential(User user, String password) {
         var random = new SecureRandom();
         var saltBytes = new byte[16];

@@ -6,12 +6,15 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.com.model.AuthRequest;
 import org.com.service.AuthService;
+import org.jboss.logging.Logger;
 
 @Path("/auth")
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuthResource {
     @Inject
     AuthService authService;
+    @Inject
+    Logger logger;
     
     @GET
     @Path("/login")
@@ -24,6 +27,8 @@ public class AuthResource {
     @POST
     @Path("/register")
     public Response register(AuthRequest authRequest) {
-        return authService.register(authRequest) ? Response.status(Response.Status.CREATED).build() : Response.serverError().build();
+        var message = authService.register(authRequest);
+        logger.info(message);
+        return Response.status(Response.Status.CREATED).build();
     }
 }
