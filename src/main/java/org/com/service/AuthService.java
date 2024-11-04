@@ -48,13 +48,13 @@ public class AuthService {
                 logger.error(String.format("verifyAndGenerateToken - user with no credential '%s'", user.id));
             }
         }
-        throw new ValidationException("register.authRequest", "incorrect username or password");
+        throw new ValidationException("authRequest", "incorrect username or password");
     }
     
     @Transactional
     public Response validateAndRegister(AuthRequest authRequest) {
         if (User.find("username", authRequest.username()).count() > 0) {
-            throw new ValidationException("register.authRequest.username", "Username not unique");
+            throw new ValidationException("username", "Username not unique");
         }
         var user = new User();
         user.username = authRequest.username();
@@ -72,7 +72,6 @@ public class AuthService {
         credential.persist();
         logger.info(String.format("validateAndRegister - user created '%s'", user.id));
         return Response.ok().build();
-        
     }
     
 }

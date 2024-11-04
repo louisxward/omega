@@ -6,14 +6,13 @@ import jakarta.ws.rs.ext.Provider;
 import org.com.exception.ValidationException;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Provider
 public class ValidationExceptionMapper implements ExceptionMapper<ValidationException> {
     
     @Override
     public Response toResponse(ValidationException exception) {
-        Map<String, String> errorResponse = new HashMap<>();
+        var errorResponse = new HashMap<String, String>();
         errorResponse.put(exception.field, exception.getMessage());
         return Response.status(Response.Status.BAD_REQUEST).entity(errorResponse).build();
     }
