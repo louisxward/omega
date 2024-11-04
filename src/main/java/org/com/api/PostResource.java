@@ -1,6 +1,7 @@
 package org.com.api;
 
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -25,7 +26,7 @@ public class PostResource {
     
     @GET
     @Path("/{id}")
-    public Response get(@PathParam("id") Long id) {
+    public Response get(@NotNull @PathParam("id") Long id) {
         var opt = Post.findByIdOptional(id);
         return Response.status(opt.isPresent() ? Response.Status.FOUND.getStatusCode() : Response.Status.NOT_FOUND.getStatusCode())
             .entity(opt.orElse(null))
@@ -34,7 +35,7 @@ public class PostResource {
     
     @GET
     @Path("/userId/{id}")
-    public Response getByUserId(@PathParam("id") Long id) {
+    public Response getByUserId(@NotNull @PathParam("id") Long id) {
         var list = Post.list("userId", id);
         return Response.status(!list.isEmpty() ? Response.Status.OK.getStatusCode() : Response.Status.NO_CONTENT.getStatusCode())
             .entity(list)

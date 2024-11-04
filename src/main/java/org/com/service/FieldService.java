@@ -1,6 +1,5 @@
 package org.com.service;
 
-import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.OptimisticLockException;
@@ -10,7 +9,6 @@ import org.com.model.FieldUpdateRequest;
 import org.com.repository.FieldRepository;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
 public class FieldService {
@@ -30,7 +28,7 @@ public class FieldService {
         requestQueue.offer(request);
     }
     
-    @Scheduled(every = "1s", delay = 10, delayUnit = TimeUnit.SECONDS)
+    //@Scheduled(every = "1s", delay = 10, delayUnit = TimeUnit.SECONDS)
     void processQueuedUpdates() {
         FieldUpdateRequest request;
         while ((request = requestQueue.poll()) != null) {

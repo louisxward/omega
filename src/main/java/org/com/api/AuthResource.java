@@ -1,4 +1,4 @@
-package org.com.auth;
+package org.com.api;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
