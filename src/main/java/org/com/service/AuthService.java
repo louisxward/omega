@@ -30,7 +30,6 @@ public class AuthService {
         Optional<User> optUser = User.find("username", authRequest.username()).firstResultOptional();
         if (optUser.isPresent()) {
             var user = optUser.get();
-            logger.info(String.format("verifyAndGenerateToken - user found '%s'", user.id));
             Optional<UserCredential> optCredential = UserCredential.find("user", user).firstResultOptional();
             if (optCredential.isPresent()) {
                 var credential = optCredential.get();
@@ -39,54 +38,41 @@ public class AuthService {
                     logger.info(String.format("verifyAndGenerateToken - user authorised '%s'", user.id));
                     var token = Jwt.issuer(ISSUER)
                         .upn(authRequest.username())
+                        // ToDo - Set admin if admin
                         .groups(Set.of("standard"))
                         .sign();
                     return Response.ok(token).build();
                 }
             }
+            else {
+                logger.error(String.format("verifyAndGenerateToken - user with no credential '%s'", user.id));
+            }
         }
-        logger.warn("verifyAndGenerateToken - BAD_REQUEST");
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        throw new ValidationException("register.authRequest", "incorrect username or password");
     }
     
     @Transactional
     public Response validateAndRegister(AuthRequest authRequest) {
-        if (!verifyUniqueUsername(authRequest.username())) {
+        if (User.find("username", authRequest.username()).count() > 0) {
             throw new ValidationException("register.authRequest.username", "Username not unique");
         }
-        var user = createUser(authRequest.username());
-        createCredential(user, authRequest.password());
-        logger.info(String.format("validateAndRegister - user created '%s'", user.id));
-        return Response.ok().build();
-        
-    }
-    
-    private boolean verifyUniqueUsername(String username) {
-        return User.find("username", username).count() == 0;
-    }
-    
-    private User createUser(String username) {
         var user = new User();
-        user.username = username;
+        user.username = authRequest.username();
         user.persist();
-        return user;
-    }
-    
-    private String passSalt() {
         var random = new SecureRandom();
         var saltBytes = new byte[16];
         random.nextBytes(saltBytes);
-        return Base64.getEncoder().encodeToString(saltBytes);
-    }
-    
-    private void createCredential(User user, String password) {
-        var salt = passSalt();
-        var seasonedPassword = salt + password + PEPPER;
+        var salt = Base64.getEncoder().encodeToString(saltBytes);
+        var seasonedPassword = salt + authRequest.password() + PEPPER;
         var passwordHash = BcryptUtil.bcryptHash(seasonedPassword);
         var credential = new UserCredential();
         credential.user = user;
         credential.passwordHash = passwordHash;
         credential.salt = salt;
         credential.persist();
+        logger.info(String.format("validateAndRegister - user created '%s'", user.id));
+        return Response.ok().build();
+        
     }
+    
 }
