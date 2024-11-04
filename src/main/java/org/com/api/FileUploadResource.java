@@ -1,8 +1,6 @@
 package org.com.api;
 
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -30,7 +28,8 @@ public class FileUploadResource {
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@NotNull @Valid FileUploadForm form) {
+    //@NotNull @Valid
+    public Response uploadFile(FileUploadForm form) {
         logger.info("uploadFile");
         try (InputStream inputStream = form.file()) {
             Files.createDirectories(Paths.get(UPLOAD_DIR));
