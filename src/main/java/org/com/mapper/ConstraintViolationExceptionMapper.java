@@ -1,4 +1,4 @@
-package org.com.exception;
+package org.com.mapper;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

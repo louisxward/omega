@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 import org.com.entity.User;
 import org.com.entity.UserCredential;
+import org.com.exception.ValidationException;
 import org.com.model.AuthRequest;
 import org.jboss.logging.Logger;
 
@@ -26,7 +27,6 @@ public class AuthService {
     Logger logger;
     
     public Response verifyAndGenerateToken(AuthRequest authRequest) {
-        logger.info("verifyAndGenerateToken");
         Optional<User> optUser = User.find("username", authRequest.username()).firstResultOptional();
         if (optUser.isPresent()) {
             var user = optUser.get();
@@ -51,14 +51,14 @@ public class AuthService {
     
     @Transactional
     public Response validateAndRegister(AuthRequest authRequest) {
-        logger.info("validateAndRegister");
         if (!verifyUniqueUsername(authRequest.username())) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("{field='register.authRequest.username', message='must be unique'}").build();
+            throw new ValidationException("register.authRequest.username", "Username not unique");
         }
         var user = createUser(authRequest.username());
         createCredential(user, authRequest.password());
         logger.info(String.format("validateAndRegister - user created '%s'", user.id));
         return Response.ok().build();
+        
     }
     
     private boolean verifyUniqueUsername(String username) {
