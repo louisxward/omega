@@ -23,7 +23,13 @@ public class FileUploadResource {
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     //@NotNull @Valid
-    //FileUploadForm form
+    //@RestForm FileUpload file, @RestForm String fileName
+//        System.out.println("fileName: " + fileName);
+//        System.out.println("fileSize: " + file.size());
+
+//    FileUploadForm form
+//        System.out.println("fileName: " + form.fileName());
+//        System.out.println("fileSize: " + form.file().size());
     public Response uploadFile(@RestForm FileUpload file, @RestForm String fileName) {
         logger.info("uploadFile");
         System.out.println("fileName: " + fileName);
