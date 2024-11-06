@@ -3,13 +3,9 @@ package org.com.model;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
-public record FileUploadForm(
-    //@NotNull
+public class FileUploadForm {
     @RestForm
-    //@PartType(MediaType.APPLICATION_OCTET_STREAM)
-    //@MultipartForm
-    FileUpload file,
-    //@NotBlank
+    public FileUpload file;
     @RestForm
-    String fileName
-) {}
+    public String fileName;
+}
