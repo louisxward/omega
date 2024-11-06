@@ -1,17 +1,14 @@
 package org.com.model;
 
-import jakarta.ws.rs.core.MediaType;
-import org.jboss.resteasy.reactive.PartType;
-import org.jboss.resteasy.reactive.RestForm;
-
-import java.io.InputStream;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 public record FileUploadForm(
     //@NotNull
-    @RestForm
-    @PartType(MediaType.APPLICATION_OCTET_STREAM)
-    InputStream file,
+//    @RestForm
+    //@PartType(MediaType.APPLICATION_OCTET_STREAM)
+    //@MultipartForm
+    FileUpload file,
     //@NotBlank
-    @RestForm
+//    @RestForm
     String fileName
 ) {}

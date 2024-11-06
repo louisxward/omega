@@ -7,15 +7,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.com.model.FileUploadForm;
 import org.jboss.logging.Logger;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 @Path("/files")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,17 +23,27 @@ public class FileUploadResource {
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     //@NotNull @Valid
-    public Response uploadFile(FileUploadForm form) {
+    //FileUploadForm form
+    public Response uploadFile(@RestForm FileUpload file, @RestForm String fileName) {
         logger.info("uploadFile");
-        try (InputStream inputStream = form.file()) {
-            Files.createDirectories(Paths.get(UPLOAD_DIR));
-            File file = new File(UPLOAD_DIR, form.fileName());
-            try (FileOutputStream outputStream = new FileOutputStream(file)) {
-                inputStream.transferTo(outputStream);
-            }
-            return Response.ok("File uploaded successfully!").build();
-        } catch (IOException e) {
-            return Response.serverError().entity("Failed to upload file").build();
-        }
+        System.out.println("fileName: " + fileName);
+        System.out.println("fileSize: " + file.size());
+
+//        byte[] bytes = file.bytes();
+//
+//        // Save the file to a desired location
+//        Files.write(Paths.get("/path/to/save/" + fileName), bytes);
+        
+        return Response.ok("File uploaded successfully!").build();
+//        try (InputStream inputStream = form.file()) {
+//            Files.createDirectories(Paths.get(UPLOAD_DIR));
+//            File file = new File(UPLOAD_DIR, form.fileName());
+//            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+//                inputStream.transferTo(outputStream);
+//            }
+//            return Response.ok("File uploaded successfully!").build();
+//        } catch (IOException e) {
+//            return Response.serverError().entity("Failed to upload file").build();
+//        }
     }
 }
